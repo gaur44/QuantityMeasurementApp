@@ -1,10 +1,10 @@
 package com.apps.quantitymeasurement;
 
-public class Weight {
+public class Quantity<U extends IMeasurable> {
     private final double value;
-    private final WeightUnit unit;
+    private final U unit;
 
-    public Weight(double value, WeightUnit unit) {
+    public Quantity(double value, U unit) {
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null.");
         }
@@ -19,7 +19,7 @@ public class Weight {
         return value;
     }
 
-    public WeightUnit getUnit() {
+    public U getUnit() {
         return unit;
     }
 
@@ -31,7 +31,8 @@ public class Weight {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Weight that = (Weight) o;
+        Quantity<?> that = (Quantity<?>) o;
+        if (this.unit.getClass() != that.unit.getClass()) return false;
         return Double.compare(this.convertToBaseUnit(), that.convertToBaseUnit()) == 0;
     }
 
@@ -40,40 +41,40 @@ public class Weight {
         return Double.hashCode(convertToBaseUnit());
     }
 
-    public Weight convertTo(WeightUnit targetUnit) {
+    public Quantity<U> convertTo(U targetUnit) {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null.");
         }
         double baseValue = unit.convertToBaseUnit(value);
         double targetValue = targetUnit.convertFromBaseUnit(baseValue);
         targetValue = Math.round(targetValue * 100.0) / 100.0;
-        return new Weight(targetValue, targetUnit);
+        return new Quantity<>(targetValue, targetUnit);
     }
 
-    private Weight addInTargetUnit(Weight thatWeight, WeightUnit targetUnit) {
-        if (thatWeight == null) {
-            throw new IllegalArgumentException("Weight to add cannot be null.");
+    private Quantity<U> addInTargetUnit(Quantity<U> other, U targetUnit) {
+        if (other == null) {
+            throw new IllegalArgumentException("Quantity to add cannot be null.");
         }
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null.");
         }
         double sumInBase = this.unit.convertToBaseUnit(this.value)
-                         + thatWeight.unit.convertToBaseUnit(thatWeight.value);
+                         + other.unit.convertToBaseUnit(other.value);
         double resultValue = targetUnit.convertFromBaseUnit(sumInBase);
         resultValue = Math.round(resultValue * 100.0) / 100.0;
-        return new Weight(resultValue, targetUnit);
+        return new Quantity<>(resultValue, targetUnit);
     }
 
-    public Weight add(Weight thatWeight) {
-        return addInTargetUnit(thatWeight, this.unit);
+    public Quantity<U> add(Quantity<U> other) {
+        return addInTargetUnit(other, this.unit);
     }
 
-    public Weight add(Weight thatWeight, WeightUnit targetUnit) {
-        return addInTargetUnit(thatWeight, targetUnit);
+    public Quantity<U> add(Quantity<U> other, U targetUnit) {
+        return addInTargetUnit(other, targetUnit);
     }
 
     @Override
     public String toString() {
-        return value + " " + unit.toString();
+        return value + " " + unit.getUnitName();
     }
 }
