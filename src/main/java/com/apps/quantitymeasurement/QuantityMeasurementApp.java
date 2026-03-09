@@ -50,6 +50,30 @@ public class QuantityMeasurementApp {
         System.out.println("add(" + length1 + ", " + length2 + ", " + targetUnit + ") = " + result);
         return result;
     }
+    
+    public static boolean demonstrateWeightEquality(Weight weight1, Weight weight2) {
+        boolean result = weight1.equals(weight2);
+        System.out.println(weight1 + " == " + weight2 + " ? " + result);
+        return result;
+    }
+
+    public static Weight demonstrateWeightConversion(Weight weight, WeightUnit toUnit) {
+        Weight converted = weight.convertTo(toUnit);
+        System.out.println(weight + " -> " + converted);
+        return converted;
+    }
+
+    public static Weight demonstrateWeightAddition(Weight weight1, Weight weight2) {
+        Weight result = weight1.add(weight2);
+        System.out.println("add(" + weight1 + ", " + weight2 + ") = " + result);
+        return result;
+    }
+
+    public static Weight demonstrateWeightAddition(Weight weight1, Weight weight2, WeightUnit targetUnit) {
+        Weight result = weight1.add(weight2, targetUnit);
+        System.out.println("add(" + weight1 + ", " + weight2 + ", " + targetUnit + ") = " + result);
+        return result;
+    }
 
     public static void main(String[] args) {
 
@@ -119,6 +143,11 @@ public class QuantityMeasurementApp {
 		    new Length(12.0, LengthUnit.INCHES),
 		    LengthUnit.INCHES
 		);
+		demonstrateWeightEquality(new Weight(1.0, WeightUnit.KILOGRAM), new Weight(1.0, WeightUnit.KILOGRAM));
+		
+		demonstrateWeightConversion(new Weight(2.0, WeightUnit.POUND), WeightUnit.KILOGRAM);
+		
+		demonstrateWeightAddition(new Weight(1.0, WeightUnit.KILOGRAM), new Weight(2.0, WeightUnit.KILOGRAM));
 
 
     }

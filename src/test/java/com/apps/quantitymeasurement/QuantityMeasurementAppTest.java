@@ -111,4 +111,25 @@ public class QuantityMeasurementAppTest {
         Length result = l1.add(l2, LengthUnit.INCHES);
         assertEquals("24.0 INCHES", result.toString());
     }
+    
+    @Test
+    public void testEquality_KilogramToKilogram_SameValue() {
+        Weight w1 = new Weight(1.0, WeightUnit.KILOGRAM);
+        Weight w2 = new Weight(1.0, WeightUnit.KILOGRAM);
+        assertTrue(w1.equals(w2));
+    }
+    
+    @Test
+    public void testConversion_KilogramToGram() {
+        Weight result = new Weight(1.0, WeightUnit.KILOGRAM).convertTo(WeightUnit.GRAM);
+        assertEquals("1000.0 GRAM", result.toString());
+    }
+    
+    @Test
+    public void testAddition_SameUnit_KilogramPlusKilogram() {
+        Weight w1 = new Weight(1.0, WeightUnit.KILOGRAM);
+        Weight w2 = new Weight(2.0, WeightUnit.KILOGRAM);
+        Weight result = w1.add(w2);
+        assertEquals("3.0 KILOGRAM", result.toString());
+    }
 }
