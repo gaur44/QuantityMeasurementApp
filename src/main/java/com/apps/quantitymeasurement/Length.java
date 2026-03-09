@@ -67,13 +67,29 @@ public class Length {
 		
 		return new Length(targetLength, targetUnit);
 	}
+		// utility method
+		private Length addInTargetUnit(Length thatLength, LengthUnit targetUnit) {
+		    if (thatLength == null) {
+		        throw new IllegalArgumentException("Length to add cannot be null.");
+		    }
+		    if (targetUnit == null) {
+		        throw new IllegalArgumentException("Target unit cannot be null.");
+		    }
+		    double thisInBase = this.value * this.unit.getConversionFactor();
+		    double thatInBase = thatLength.value * thatLength.unit.getConversionFactor();
+		    double sumInBase = thisInBase + thatInBase;
+		    double resultValue = Math.round((sumInBase / targetUnit.getConversionFactor()) * 100.0) / 100.0;
+		    return new Length(resultValue, targetUnit);
+		}
 	
-	public Length add(Length thatLength) {
-		double thisInches = this.value * this.unit.getConversionFactor();
-		double thatInches = thatLength.value * thatLength.unit.getConversionFactor();
-		double result = (thisInches + thatInches) / this.unit.getConversionFactor();
-		return new Length(result, this.unit);
-	}
+		public Length add(Length thatLength) {
+		    return addInTargetUnit(thatLength, this.unit);
+		}
+	
+		// UC7 add
+		public Length add(Length thatLength, LengthUnit targetUnit) {
+		    return addInTargetUnit(thatLength, targetUnit);
+		}
 	
 	@Override
 	public String toString() {

@@ -45,6 +45,12 @@ public class QuantityMeasurementApp {
         System.out.println("add(" + length1 + ", " + length2 + ") = " + result);
         return result;
     }
+    
+    public static Length demonstrateLengthAddition(Length length1, Length length2, Length.LengthUnit targetUnit) {
+        Length result = length1.add(length2, targetUnit);
+        System.out.println("add(" + length1 + ", " + length2 + ", " + targetUnit + ") = " + result);
+        return result;
+    }
 
     public static void main(String[] args) {
 
@@ -101,6 +107,20 @@ public class QuantityMeasurementApp {
 	
 	     // Cross-unit 12 inches + 1 foot = 24 inches
 	     demonstrateLengthAddition(new Length(12.0, LengthUnit.INCHES), new Length(1.0, LengthUnit.FEET));
-        
+	     
+	     demonstrateLengthAddition(
+	    		    new Length(1.0, LengthUnit.FEET),
+	    		    new Length(12.0, LengthUnit.INCHES),
+	    		    LengthUnit.FEET
+	    		);
+
+		// 1 foot + 12 inches → INCHES
+		demonstrateLengthAddition(
+		    new Length(1.0, LengthUnit.FEET),
+		    new Length(12.0, LengthUnit.INCHES),
+		    LengthUnit.INCHES
+		);
+
+
     }
 }

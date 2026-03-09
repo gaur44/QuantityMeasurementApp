@@ -95,4 +95,20 @@ public class QuantityMeasurementAppTest {
         Length result = l1.add(l2);
         assertEquals("12.0 INCHES", result.toString());
     }
+    
+    @Test
+    public void testAddition_ExplicitTargetUnit_Feet() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length result = l1.add(l2, Length.LengthUnit.FEET);
+        assertEquals("2.0 FEET", result.toString());
+    }
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_Inches() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length result = l1.add(l2, Length.LengthUnit.INCHES);
+        assertEquals("24.0 INCHES", result.toString());
+    }
 }
