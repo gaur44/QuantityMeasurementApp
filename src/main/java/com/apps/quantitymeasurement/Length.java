@@ -68,6 +68,13 @@ public class Length {
 		return new Length(targetLength, targetUnit);
 	}
 	
+	public Length add(Length thatLength) {
+		double thisInches = this.value * this.unit.getConversionFactor();
+		double thatInches = thatLength.value * thatLength.unit.getConversionFactor();
+		double result = (thisInches + thatInches) / this.unit.getConversionFactor();
+		return new Length(result, this.unit);
+	}
+	
 	@Override
 	public String toString() {
 		return value + " " + unit.toString();

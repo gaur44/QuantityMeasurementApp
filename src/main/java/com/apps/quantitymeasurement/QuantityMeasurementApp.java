@@ -39,6 +39,12 @@ public class QuantityMeasurementApp {
     	System.out.println(length + " -> " + convertedLength);
     	return convertedLength;
     }
+    
+    public static Length demonstrateLengthAddition(Length length1, Length length2) {
+        Length result = length1.add(length2);
+        System.out.println("add(" + length1 + ", " + length2 + ") = " + result);
+        return result;
+    }
 
     public static void main(String[] args) {
 
@@ -87,6 +93,14 @@ public class QuantityMeasurementApp {
         // Demonstrate conversion from Feet to Inches using 2 param method
         Length fromLength = new Length(502, LengthUnit.FEET);
         demonstrateLengthConversion(fromLength, LengthUnit.INCHES);
+        
+        demonstrateLengthAddition(new Length(1.0, LengthUnit.FEET), new Length(2.0, LengthUnit.FEET));
+
+	     // Cross-unit 1 foot + 12 inches = 2 feet
+	     demonstrateLengthAddition(new Length(1.0, LengthUnit.FEET), new Length(12.0, LengthUnit.INCHES));
+	
+	     // Cross-unit 12 inches + 1 foot = 24 inches
+	     demonstrateLengthAddition(new Length(12.0, LengthUnit.INCHES), new Length(1.0, LengthUnit.FEET));
         
     }
 }

@@ -79,4 +79,20 @@ public class QuantityMeasurementAppTest {
             feet.convertTo(null);
         });
     }
+    
+    @Test
+    public void testAddition_SameUnit_FeetPlusFeet() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(2.0, Length.LengthUnit.FEET);
+        Length result = l1.add(l2);
+        assertEquals("3.0 FEET", result.toString());
+    }
+
+    @Test
+    public void testAddition_SameUnit_InchPlusInch() {
+        Length l1 = new Length(6.0, Length.LengthUnit.INCHES);
+        Length l2 = new Length(6.0, Length.LengthUnit.INCHES);
+        Length result = l1.add(l2);
+        assertEquals("12.0 INCHES", result.toString());
+    }
 }
