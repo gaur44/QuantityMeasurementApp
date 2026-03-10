@@ -78,9 +78,16 @@ public class Quantity<U extends IMeasurable> {
         if (targetUnit == null) {
             throw new IllegalArgumentException("Target unit cannot be null.");
         }
-        double baseValue = unit.convertToBaseUnit(value);
-        double targetValue = roundToTwoDecimals(targetUnit.convertFromBaseUnit(baseValue));
-        return new Quantity<>(targetValue, targetUnit);
+        double resultValue;
+        if (this.unit instanceof TemperatureUnit) {
+            double baseValue = this.unit.convertToBaseUnit(this.value);
+            resultValue = targetUnit.convertFromBaseUnit(baseValue);
+        } else {
+            double baseValue = this.unit.convertToBaseUnit(this.value);
+            resultValue = targetUnit.convertFromBaseUnit(baseValue);
+        }
+        resultValue = roundToTwoDecimals(resultValue);
+        return new Quantity<>(resultValue, targetUnit);
     }
 
     // Helper methods
@@ -106,6 +113,7 @@ public class Quantity<U extends IMeasurable> {
     }
 
     private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+        this.unit.validateOperationSupport(operation.name());
         double thisBase = this.unit.convertToBaseUnit(this.value);
         double otherBase = other.unit.convertToBaseUnit(other.value);
         return operation.compute(thisBase, otherBase);
