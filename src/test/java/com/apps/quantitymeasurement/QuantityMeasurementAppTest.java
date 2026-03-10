@@ -144,6 +144,29 @@ public class QuantityMeasurementAppTest {
     }
     
     @Test
+    public void testConvertFromBaseUnit_LitreToMillilitre() {
+        assertEquals(1000.0, VolumeUnit.MILLILITRE.convertFromBaseUnit(1.0));
+    }
+
+
+    @Test
+    public void testConversion_RoundTrip_Volume() {
+        Quantity<VolumeUnit> original = new Quantity<>(1.5, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> roundTrip = original.convertTo(VolumeUnit.MILLILITRE)
+                .convertTo(VolumeUnit.LITRE);
+        assertTrue(original.equals(roundTrip));
+    }
+
+
+    @Test
+    public void testEquality_VolumeVsLength_Incompatible() {
+        Quantity<VolumeUnit> volume = new Quantity<>(1.0, VolumeUnit.LITRE);
+        Quantity<LengthUnit> length = new Quantity<>(1.0, LengthUnit.FEET);
+        assertFalse(volume.equals(length));
+    }
+
+    
+    @Test
     public void testAddition_CrossUnit_LitrePlusMillilitre() {
         Quantity<VolumeUnit> result = new Quantity<>(1.0, VolumeUnit.LITRE)
                 .add(new Quantity<>(1000.0, VolumeUnit.MILLILITRE));
@@ -155,6 +178,14 @@ public class QuantityMeasurementAppTest {
         Quantity<VolumeUnit> q1 = new Quantity<>(1.0, VolumeUnit.LITRE);
         Quantity<VolumeUnit> q2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
         assertTrue(q1.equals(q2));
+    }
+    
+
+    @Test
+    public void testAddition_ExplicitTargetUnit_Millilitre() {
+        Quantity<VolumeUnit> result = new Quantity<>(1.0, VolumeUnit.LITRE)
+                .add(new Quantity<>(1000.0, VolumeUnit.MILLILITRE), VolumeUnit.MILLILITRE);
+        assertEquals("2000.0 MILLILITRE", result.toString());
     }
 
 }
