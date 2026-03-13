@@ -1,12 +1,12 @@
-package com.apps.quantitymeasurement;
+package com.apps.quantitymeasurement.unit;
 
 import java.util.function.Function;
 
 public enum TemperatureUnit implements IMeasurable {
 
 	CELSIUS {
-		private final Function<Double, Double> toCelsius = celsius -> celsius;
-		private final Function<Double, Double> fromCelsius = celsius -> celsius;
+		private final Function<Double, Double> toCelsius = v -> v;
+		private final Function<Double, Double> fromCelsius = v -> v;
 
 		@Override
 		public double convertToBaseUnit(double value) {
@@ -20,8 +20,8 @@ public enum TemperatureUnit implements IMeasurable {
 	},
 
 	FAHRENHEIT {
-		private final Function<Double, Double> toCelsius = fahrenheit -> (fahrenheit - 32) * 5.0 / 9.0;
-		private final Function<Double, Double> fromCelsius = celsius -> celsius * 9.0 / 5.0 + 32;
+		private final Function<Double, Double> toCelsius = f -> (f - 32) * 5.0 / 9.0;
+		private final Function<Double, Double> fromCelsius = c -> c * 9.0 / 5.0 + 32;
 
 		@Override
 		public double convertToBaseUnit(double value) {
@@ -58,7 +58,6 @@ public enum TemperatureUnit implements IMeasurable {
 
 	@Override
 	public void validateOperationSupport(String operation) {
-		throw new UnsupportedOperationException("Temperature does not support " + operation
-				+ ". Temperature arithmetic is not meaningful for absolute values.");
+		throw new UnsupportedOperationException("Temperature does not support " + operation);
 	}
 }

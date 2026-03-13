@@ -1,25 +1,45 @@
 package com.apps.quantitymeasurement.service;
 
-import com.apps.quantitymeasurement.IMeasurable;
 import com.apps.quantitymeasurement.Quantity;
 import com.apps.quantitymeasurement.entity.QuantityDTO;
 import com.apps.quantitymeasurement.entity.QuantityMeasurementEntity;
 import com.apps.quantitymeasurement.entity.QuantityModel;
 import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
 import com.apps.quantitymeasurement.repository.IQuantityMeasurementRepository;
+import com.apps.quantitymeasurement.unit.IMeasurable;
+
+import java.util.logging.Logger;
 
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
+
+	private static final Logger logger = Logger.getLogger(QuantityMeasurementServiceImpl.class.getName());
 
 	private final IQuantityMeasurementRepository repository;
 
 	public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository) {
 		this.repository = repository;
+		logger.info("Service initialized");
 	}
 
 	@SuppressWarnings("unchecked")
 	private <U extends IMeasurable> QuantityModel<U> toModel(QuantityDTO dto) {
 		U unit = (U) IMeasurable.getUnitByName(dto.getMeasurementType(), dto.getUnitName());
 		return new QuantityModel<>(dto.getValue(), unit);
+	}
+
+	private QuantityDTO.IMeasurableUnit resolveInnerUnit(String measurementType, String unitName) {
+		switch (measurementType.toUpperCase()) {
+		case "LENGTH":
+			return QuantityDTO.LengthUnit.valueOf(unitName.toUpperCase());
+		case "WEIGHT":
+			return QuantityDTO.WeightUnit.valueOf(unitName.toUpperCase());
+		case "VOLUME":
+			return QuantityDTO.VolumeUnit.valueOf(unitName.toUpperCase());
+		case "TEMPERATURE":
+			return QuantityDTO.TemperatureUnit.valueOf(unitName.toUpperCase());
+		default:
+			throw new QuantityMeasurementException("Unknown measurement type: " + measurementType);
+		}
 	}
 
 	@Override
@@ -109,21 +129,6 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 			repository.save(
 					new QuantityMeasurementEntity(dto1.toString(), dto2.toString(), "DIVIDE", e.getMessage(), true));
 			throw new QuantityMeasurementException("Divide failed: " + e.getMessage(), e);
-		}
-	}
-
-	private QuantityDTO.IMeasurableUnit resolveInnerUnit(String measurementType, String unitName) {
-		switch (measurementType.toUpperCase()) {
-		case "LENGTH":
-			return QuantityDTO.LengthUnit.valueOf(unitName.toUpperCase());
-		case "WEIGHT":
-			return QuantityDTO.WeightUnit.valueOf(unitName.toUpperCase());
-		case "VOLUME":
-			return QuantityDTO.VolumeUnit.valueOf(unitName.toUpperCase());
-		case "TEMPERATURE":
-			return QuantityDTO.TemperatureUnit.valueOf(unitName.toUpperCase());
-		default:
-			throw new QuantityMeasurementException("Unknown measurement type: " + measurementType);
 		}
 	}
 }
