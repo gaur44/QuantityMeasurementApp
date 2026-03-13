@@ -3,6 +3,14 @@ package com.apps.quantitymeasurement;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.apps.quantitymeasurement.controller.QuantityMeasurementController;
+import com.apps.quantitymeasurement.entity.QuantityDTO;
+import com.apps.quantitymeasurement.entity.QuantityMeasurementEntity;
+import com.apps.quantitymeasurement.repository.QuantityMeasurementCacheRepository;
+import com.apps.quantitymeasurement.service.IQuantityMeasurementService;
+import com.apps.quantitymeasurement.service.QuantityMeasurementServiceImpl;
+import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
+
 public class QuantityMeasurementAppTest {
 
     @Test
@@ -305,6 +313,63 @@ public class QuantityMeasurementAppTest {
         Quantity<TemperatureUnit> temp = new Quantity<>(100.0, TemperatureUnit.CELSIUS);
         Quantity<LengthUnit> length = new Quantity<>(100.0, LengthUnit.FEET);
         assertFalse(temp.equals(length));
+    }
+
+    
+    // UC 15 test cases
+
+    @Test
+    public void testEntity_SingleOperandConstruction() {
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity(
+            "1.0 FEET (LENGTH)", "CONVERT", "12.0 INCHES (LENGTH)");
+        assertFalse(entity.hasError());
+        assertEquals("CONVERT", entity.getOperation());
+        assertEquals("12.0 INCHES (LENGTH)", entity.getResult());
+    }
+
+    @Test
+    public void testEntity_BinaryOperandConstruction() {
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity(
+            "1.0 FEET (LENGTH)", "12.0 INCHES (LENGTH)", "ADD", "2.0 FEET (LENGTH)");
+        assertFalse(entity.hasError());
+        assertEquals("ADD", entity.getOperation());
+        assertNotNull(entity.getResult());
+    }
+
+    @Test
+    public void testService_Compare_SameUnit_Success() {
+        IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(
+            QuantityMeasurementCacheRepository.getInstance());
+        boolean result = service.compare(
+            new QuantityDTO(1.0, QuantityDTO.LengthUnit.FEET),
+            new QuantityDTO(12.0, QuantityDTO.LengthUnit.INCHES)
+        );
+        assertTrue(result);
+    }
+
+
+    
+    @Test
+    public void testController_PerformComparison_Success() {
+        QuantityMeasurementController controller = new QuantityMeasurementController(
+            new QuantityMeasurementServiceImpl(
+                QuantityMeasurementCacheRepository.getInstance()));
+        boolean result = controller.performComparison(
+            new QuantityDTO(1.0, QuantityDTO.WeightUnit.KILOGRAM),
+            new QuantityDTO(1000.0, QuantityDTO.WeightUnit.GRAM)
+        );
+        assertTrue(result);
+    }
+
+    @Test
+    public void testController_PerformConversion_Success() {
+        QuantityMeasurementController controller = new QuantityMeasurementController(
+            new QuantityMeasurementServiceImpl(
+                QuantityMeasurementCacheRepository.getInstance()));
+        QuantityDTO result = controller.performConversion(
+            new QuantityDTO(1.0, QuantityDTO.VolumeUnit.LITRE), "MILLILITRE");
+        assertNotNull(result);
+        assertEquals(1000.0, result.getValue());
     }
 
 
